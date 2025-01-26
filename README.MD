@@ -44,7 +44,7 @@ Edit or create your `docker-compose.yml` file and add your variables. Make sure 
 version: "3.8"
 services:
   cobaltstrike:
-    image: cobaltstrike
+    image: chryzsh/cobaltstrike
     container_name: cobaltstrike
     ports:
       - "50050:50050"          # Teamserver communication (*)
@@ -205,7 +205,6 @@ docker build -t cobaltstrike:latest
 
 
 ##  Disclaimer
-- docker-cobaltstrike is licensed under 
 - This project is intended for **legal and authorized use only**.
 - Cobalt Strike is a commercial tool—ensure you have a valid license from [HelpSystems](https://www.helpsystems.com/).
 - Maintainers are not responsible for misuse of this setup.
