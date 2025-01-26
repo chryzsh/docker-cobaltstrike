@@ -1,0 +1,49 @@
+# Logs
+*.log
+*.out
+*.err
+
+# Ignore Docker Compose override files
+docker-compose.override.yml
+
+# Ignore compiled CNA files (if any are generated)
+*.cna
+
+# Ignore environment variables and sensitive files
+.env
+*.env
+
+# Ignore temporary and backup files
+*.tmp
+*.bak
+*~
+
+# Ignore yml
+*.yml
+restart.sh
+
+# ignore profiles
+profiles/
+
+# Ignore service-specific dynamic files
+services/*.cna
+services/*.cna.template
+
+# Ignore compiled Java class files (if Java is involved)
+*.class
+
+# Ignore OS-generated files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE-specific files
+.vscode/
+.idea/
+*.swp
+
+# Ignore runtime-generated files
+!profiles/*.profile
+
+# Ignore secrets or license keys
+LICENSE
+*.license
