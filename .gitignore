@@ -25,10 +25,6 @@ restart.sh
 # ignore profiles
 profiles/
 
-# Ignore service-specific dynamic files
-services/*.cna
-services/*.cna.template
-
 # Ignore compiled Java class files (if Java is involved)
 *.class
 

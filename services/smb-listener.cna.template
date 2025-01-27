@@ -1,0 +1,16 @@
+println("cs-smb-listener.cna: Creating SMB Listener...");
+on ready {
+    listener_create_ext(
+        "SMB",
+        "windows/beacon_bind_pipe",
+        %(
+            port => "${SMB_LISTENER_NAMED_PIPE_NAME}"
+        )
+    );
+    println("SMB Listener created.");
+    println("Script execution completed. Waiting 3s before closing...");
+    sleep(3000);
+
+    println("Closing client now.");
+    closeClient();
+}

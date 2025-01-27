@@ -1,0 +1,20 @@
+println("dns-listener.cna: Creating DNS Listener...");
+on ready {
+    listener_create_ext(
+        "DNS",
+        "windows/beacon_dns/reverse_dns_txt",
+        %(
+            beacons  => "${DNS_LISTENER_DOMAIN_NAME}",
+            host     => "${DNS_LISTENER_STAGER_DOMAIN_NAME}",
+            port     => 53,
+            bindto   => 53,
+            strategy => "round-robin",
+            maxretry => "exit-10-5-5m"
+        )
+    );
+    println("DNS Listener created.");
+    sleep(1000);
+
+    println("Closing client now.");
+    closeClient();
+}

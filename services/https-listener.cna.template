@@ -1,0 +1,21 @@
+println("https-listener.cna: Creating HTTPS Listener...");
+on ready {
+    listener_create_ext(
+        "HTTPS",
+        "windows/beacon_https/reverse_https",
+        %(
+            host     => "${HTTPS_LISTENER_DOMAIN_NAME}",
+            port     => 443,
+            beacons  => "${HTTPS_LISTENER_DOMAIN_NAME}",
+            althost  => "${HTTPS_LISTENER_DOMAIN_NAME}",
+            bindto   => 443,
+            strategy => "round-robin",
+            maxretry => "exit-10-5-5m"
+        )
+    );
+    println("HTTPS Listener created.");
+    sleep(1000);
+
+    println("Closing client now.");
+    closeClient();
+}

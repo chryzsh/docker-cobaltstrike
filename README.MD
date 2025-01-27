@@ -285,7 +285,7 @@ Here are some considerations and choices I made for this project.
 #### Installing the Teamserver in the container / Dockerfile
 This apporach would require me to either hardcode my license, which is completely out of the question, or supply a build time argument when building the container. The latter works, but would not allow me to publish the container nonetheless as it would be licensed with my license. Essentially, to use this project, you would have to build the container yourself and license it. That may be useful to some, but was not the goal of this project.
 #### Not starting listeners
-I could have built the project without starting any listeners. This would have been more than ok and removed a bit of complexity from the project. However, I had already experimented quite a bit with starting listeners through aggressor scripts, which means it was not too bad to get this working. You can also simply delete the environment variables and no 
+I could have built the project without starting any listeners. This would have been more than ok and removed a bit of complexity from the project. However, I had already experimented quite a bit with starting listeners through aggressor scripts, which means it was not too bad to get this working. You can also simply delete the environment variables and port mappings, and no listeners will be started.
 #### Handling everything with Bash
 I tried, and failed miserably. The one `entrypoint.sh` script I used to both install, run the Teamserver and start the listeners. And this absolutely breaks with the "one process" paradigm of Docker containers. Supervisor gave me a much more robust and flexible way to deal with the dependent tasks.
 
