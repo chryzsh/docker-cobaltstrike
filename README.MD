@@ -22,7 +22,7 @@ Cobalt Strike is a Red Team post-exploitation framework. Likely, if you are here
 ### Prepare Docker and Docker Compose plugin
 - Install Docker and the Docker Compose plugin on your host. See:
     - [Install Docker Engine](https://docs.docker.com/engine/install/)
-    - [Install Docker Engine](https://docs.docker.com/compose/install/)
+    - [Install Docker Compose ](https://docs.docker.com/compose/install/)
 - Ensure your host fulfils the minimum requirements the Teamserver, see the installation guide for details:
   - [Cobalt Strike Installation Guide](https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/cobalt-strike-install.pdf)
 
@@ -47,12 +47,13 @@ services:
     image: chryzsh/cobaltstrike
     container_name: cobaltstrike
     ports:
-      - "50050:50050"          # Teamserver communication (*)
-      - "443:443"              # HTTPS listener
-      - "80:80"                # HTTP listener
-      - "53:53/udp"            # DNS listener
+      - "50050:50050" # Teamserver communication (*)
+      - "443:443"     # HTTPS listener
+      - "80:80"       # HTTP listener
+      - "53:53/udp"   # DNS listener
     volumes:
       - ./profiles:/opt/cobaltstrike/profiles      # Host path to your C2 profile (*)
+      - ./logs:/var/log/Supervisor                 # Logs for the supervisor service 
     environment:
       - LICENSE_KEY=your_license_key_here          # Replace with your valid license (*)
       - TEAMSERVER_PASSWORD=your_secure_password   # Team server password (*)
@@ -81,7 +82,6 @@ docker logs cobaltstrike          # View logs (Ctrl+C to exit)
 You can of course also connect to the Teamserver with your Cobalt Strike client.
 - Connect via Cobalt Strike client
 - Navigate to Cobalt Strike -> Listeners
-
 
 
 ## Configuration
@@ -128,6 +128,10 @@ If this doesn't help, the image may be broken and I am sorry. Submit an issue wi
 The installation of Cobalt Strike takes a few minutes when it installs the first time. If you are curious about the status, you can check nspect the logs from Supervisor in the running container:
 ```bash
 docker exec -it cobaltstrike /bin/bash -c 'cat /var/log/supervisor/*'
+```
+Or since the logs are mounted on host
+```bash
+cat logs/*
 ```
 If you don't know what is wrong or can't fix it, submit an issue with all the Supervisor logs.
 
@@ -288,6 +292,37 @@ This apporach would require me to either hardcode my license, which is completel
 I could have built the project without starting any listeners. This would have been more than ok and removed a bit of complexity from the project. However, I had already experimented quite a bit with starting listeners through aggressor scripts, which means it was not too bad to get this working. You can also simply delete the environment variables and port mappings, and no listeners will be started.
 #### Handling everything with Bash
 I tried, and failed miserably. The one `entrypoint.sh` script I used to both install, run the Teamserver and start the listeners. And this absolutely breaks with the "one process" paradigm of Docker containers. Supervisor gave me a much more robust and flexible way to deal with the dependent tasks.
+
+### Environment Validation and Error Handling
+
+#### Enhanced Process Management
+The container now includes improved process management and error handling:
+
+1. **Centralized Environment Validation**
+   - All environment variables are validated before any service starts
+   - Regex-based format validation for variables
+   - Clear error messages for invalid configurations
+   - Validation of both required and optional variables
+
+2. **Improved Process Management**
+   - Enhanced supervisord configuration with proper priorities
+   - Process state monitoring and logging
+   - Proper dependency handling between services
+   - Automatic recovery from failures
+
+3. **Robust Error Handling**
+   - Retry mechanisms for critical operations
+   - Proper cleanup on failures
+   - Enhanced logging for troubleshooting
+   - Parallel listener setup with individual error handling
+
+4. **Process State Monitoring**
+   - Real-time monitoring of process states
+   - Automatic logging of state changes
+   - Proper handling of process failures
+   - Clear status reporting in logs
+
+The validation and error handling improvements make the container more reliable and easier to troubleshoot while maintaining all existing functionality.
 
 ### Known limitations
 - **No TLS certificate installed**: This project does not configure a TLS certificate for the HTTPS listener. If you choose to start an HTTPS listener it will start with the default certificate. For some operators this is not a problem if they for example terminate TLS on their redirector. Feel free to submit a pull request if you feel like implementing support for this.

@@ -4,10 +4,16 @@ FROM ubuntu:22.04
 # Avoid interactive prompts during apt installs
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Default environment variables
-ENV TEAMSERVER_HOST=0.0.0.0
-ENV TEAMSERVER_PASSWORD=changeme
-ENV C2_PROFILE_NAME=reference.profile
+# Required environment variables that must be provided at runtime:
+# - TEAMSERVER_PASSWORD: Password for the team server (min 8 characters)
+# - LICENSE_KEY: Your Cobalt Strike license key
+# - C2_PROFILE_NAME: Name of your C2 profile file (must be mounted in /opt/cobaltstrike/profiles)
+
+# Optional environment variables for listeners:
+# - DNS_LISTENER_DOMAIN_NAME: Domain name for DNS listener
+# - HTTPS_LISTENER_DOMAIN_NAME: Domain name for HTTPS listener
+# - HTTP_LISTENER_DOMAIN_NAME: Domain name for HTTP listener
+# - SMB_C2_NAMED_PIPE_NAME: Named pipe for SMB listener
 
 # Expose necessary ports
 EXPOSE 50050
