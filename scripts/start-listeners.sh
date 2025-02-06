@@ -7,7 +7,13 @@ source /opt/cobaltstrike/scripts/env_validator.sh
 # Default directories
 CS_DIR="/opt/cobaltstrike"
 CNA_DIR="$CS_DIR/services"
-TEAMSERVER_HOST="127.0.0.1"  # Use localhost since we're in a container
+
+# Get container's primary IP
+TEAMSERVER_HOST=$(hostname -I | awk '{print $1}')
+if [ -z "$TEAMSERVER_HOST" ]; then
+    echo "Error: Failed to determine container IP address"
+    exit 1
+fi
 
 # Validate environment variables
 if ! validate_env_vars; then
