@@ -11,7 +11,13 @@ UPDATE_SCRIPT="${CS_DIR}/update"
 TEAMSERVER_SCRIPT="${CS_DIR}/server/teamserver"
 TEAMSERVER_IMAGE="${CS_DIR}/server/TeamServerImage"
 PROFILE_DIR="$CS_DIR/profiles"
-TEAMSERVER_HOST="0.0.0.0"  # Use localhost since we're in a container
+
+# Get container's primary IP
+TEAMSERVER_HOST=$(hostname -I | awk '{print $1}')
+if [ -z "$TEAMSERVER_HOST" ]; then
+    echo "Error: Failed to determine container IP address"
+    exit 1
+fi
 
 # Validate environment variables
 if ! validate_env_vars; then
