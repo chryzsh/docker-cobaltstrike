@@ -40,6 +40,9 @@ setup_listener() {
                     return 1
                 fi
 
+                # cd to the client directory
+
+                cd "$CS_DIR/client" || exit 1
                 # Run agscript with localhost
                 if $CS_DIR/client/agscript "$TEAMSERVER_HOST" 50050 svc "$TEAMSERVER_PASSWORD" "$CNA_DIR/$script_name"; then
                     echo "Successfully set up $script_name listener"
