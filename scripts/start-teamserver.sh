@@ -11,7 +11,7 @@ UPDATE_SCRIPT="${CS_DIR}/update"
 TEAMSERVER_SCRIPT="${CS_DIR}/server/teamserver"
 TEAMSERVER_IMAGE="${CS_DIR}/server/TeamServerImage"
 PROFILE_DIR="$CS_DIR/profiles"
-TEAMSERVER_HOST="127.0.0.1"  # Use localhost since we're in a container
+TEAMSERVER_HOST="0.0.0.0"  # Use localhost since we're in a container
 
 # Validate environment variables
 if ! validate_env_vars; then
