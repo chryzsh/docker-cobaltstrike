@@ -21,6 +21,12 @@ if ! validate_env_vars; then
     exit 1
 fi
 
+# Function to get environment variable value safely
+get_env_var() {
+    local var_name=$1
+    eval echo "\${$var_name:-}"
+}
+
 # Function to set up a listener with retry logic
 setup_listener() {
     local script_name=$1
@@ -28,8 +34,9 @@ setup_listener() {
     local max_attempts=3
     local attempt=1
     local output_file="/var/log/supervisor/listener_${script_name}.log"
+    local var_value=$(get_env_var "$env_var")
 
-    if [ -n "${!env_var}" ]; then
+    if [ -n "$var_value" ]; then
         echo "Setting up $script_name listener..."
         
         while [ $attempt -le $max_attempts ]; do
@@ -39,8 +46,6 @@ setup_listener() {
                     echo "Failed to create CNA script from template"
                     return 1
                 fi
-
-                # cd to the client directory
 
                 cd "$CS_DIR/client" || exit 1
                 # Run agscript with localhost
