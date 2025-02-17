@@ -82,7 +82,7 @@ setup_listener "http-listener.cna" "HTTP_LISTENER_DOMAIN_NAME" &
 pids+=($!)
 
 # SMB Listener
-setup_listener "smb-listener.cna" "SMB_C2_NAMED_PIPE_NAME" &
+setup_listener "smb-listener.cna" "SMB_LISTENER_NAMED_PIPE_NAME" &
 pids+=($!)
 
 # Wait for all background processes and check their exit status

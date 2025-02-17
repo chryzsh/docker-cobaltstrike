@@ -6,19 +6,10 @@ declare -A ENV_VARS=(
     ["LICENSE_KEY"]="^[A-Za-z0-9-]+$"
 )
 
-# Optional listener environment variables (no syntax validation)
-OPTIONAL_VARS=(
-    "DNS_LISTENER_DOMAIN_NAME"
-    "DNS_LISTENER_STAGER_DOMAIN_NAME"
-    "HTTPS_LISTENER_DOMAIN_NAME"
-    "HTTP_LISTENER_DOMAIN_NAME"
-    "SMB_LISTENER_NAMED_PIPE_NAME"
-)
-
 validate_env_vars() {
     local has_error=0
 
-    # Validate required variables
+    # Validate required variables only
     for var in "${!ENV_VARS[@]}"; do
         if [ -z "${!var+x}" ]; then
             echo "ERROR: Required environment variable $var is not set"
@@ -37,13 +28,6 @@ validate_env_vars() {
                     ;;
             esac
             has_error=1
-        fi
-    done
-
-    # Only check if optional variables are set, no syntax validation
-    for var in "${OPTIONAL_VARS[@]}"; do
-        if [ -z "${!var+x}" ]; then
-            echo "WARNING: Optional environment variable $var is not set"
         fi
     done
 
