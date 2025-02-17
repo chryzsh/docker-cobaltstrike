@@ -7,13 +7,14 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Required environment variables that must be provided at runtime:
 # - TEAMSERVER_PASSWORD: Password for the team server (min 8 characters)
 # - LICENSE_KEY: Your Cobalt Strike license key
-# - C2_PROFILE_NAME: Name of your C2 profile file (must be mounted in /opt/cobaltstrike/profiles)
+# Note: A C2 profile file (*.profile) must be mounted in /opt/cobaltstrike/profiles
 
 # Optional environment variables for listeners:
 # - DNS_LISTENER_DOMAIN_NAME: Domain name for DNS listener
+# - DNS_LISTENER_STAGER_DOMAIN_NAME: Domain name for DNS stager
 # - HTTPS_LISTENER_DOMAIN_NAME: Domain name for HTTPS listener
 # - HTTP_LISTENER_DOMAIN_NAME: Domain name for HTTP listener
-# - SMB_C2_NAMED_PIPE_NAME: Named pipe for SMB listener
+# - SMB_LISTENER_NAMED_PIPE_NAME: Named pipe for SMB listener
 
 # Expose necessary ports
 EXPOSE 50050

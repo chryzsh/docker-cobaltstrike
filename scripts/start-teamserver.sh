@@ -25,21 +25,17 @@ if ! validate_env_vars; then
     exit 1
 fi
 
-# Function to verify C2 profile
+# Function to get first C2 profile
 verify_c2_profile() {
     if [ ! -d "$PROFILE_DIR" ]; then
         echo "Error: Profile directory $PROFILE_DIR does not exist. Mount your profiles directory to the container."
         return 1
     fi
 
-    if [ -z "${C2_PROFILE_NAME:-}" ]; then
-        echo "Error: C2_PROFILE_NAME environment variable is not set"
-        return 1
-    fi
-
-    local profile_path="$PROFILE_DIR/$C2_PROFILE_NAME"
-    if [ ! -f "$profile_path" ]; then
-        echo "Error: C2 profile $C2_PROFILE_NAME not found in $PROFILE_DIR"
+    # Find first .profile file
+    local profile_path=$(find "$PROFILE_DIR" -maxdepth 1 -type f -name "*.profile" | head -n 1)
+    if [ -z "$profile_path" ]; then
+        echo "Error: No .profile files found in $PROFILE_DIR"
         return 1
     fi
 
