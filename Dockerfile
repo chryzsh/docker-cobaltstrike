@@ -17,7 +17,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # - SMB_LISTENER_NAMED_PIPE_NAME: Named pipe for SMB listener
 
 # Expose necessary ports
-EXPOSE 50050
+EXPOSE 50050 50443
 
 # Install required packages
 RUN apt-get update && \

@@ -93,7 +93,8 @@ main() {
     if ! exec "$TEAMSERVER_SCRIPT" \
          "$TEAMSERVER_HOST" \
          "$TEAMSERVER_PASSWORD" \
-         "$PROFILE_PATH"; then
+         "$PROFILE_PATH" \
+         --experimental-db; then
         echo "Failed to start teamserver"
         exit 1
     fi
