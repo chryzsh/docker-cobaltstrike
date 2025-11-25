@@ -25,7 +25,7 @@ echo "Host: 127.0.0.1:50050 (teamserver connection)"
 echo "REST API Port: 50443 (default)"
 echo "Username: csrestapi"
 
-cd "$CS_DIR/server" || exit 1
+cd "$CS_DIR/server/rest-server" || exit 1
 
 # Execute REST API server
 if ! exec "$RESTAPI_SCRIPT" \
