@@ -6,7 +6,7 @@ source /opt/cobaltstrike/scripts/env_validator.sh
 
 # Default directories and files
 CS_DIR="/opt/cobaltstrike"
-RESTAPI_SCRIPT="${CS_DIR}/server/csrestapi"
+RESTAPI_SCRIPT="${CS_DIR}/server/rest-server/csrestapi"
 
 # Validate environment variables
 if ! validate_env_vars; then
