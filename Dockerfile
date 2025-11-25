@@ -27,7 +27,7 @@ RUN apt-get update && \
       expect \
       supervisor \
       gettext-base \
-      openjdk-11-jdk && \
+      openjdk-17-jdk && \
     rm -rf /var/lib/apt/lists/*
 
 # Set up directories
