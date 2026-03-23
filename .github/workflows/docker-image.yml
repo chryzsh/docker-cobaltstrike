@@ -5,6 +5,7 @@ on:
     branches: [ "main" ] # Trigger on pushes to main branch
   pull_request:
     branches: [ "main" ] # Optional: Trigger on PRs to main
+  workflow_dispatch:      # Allow manual triggers
   schedule:
     - cron: '0 0 * * 0'  # Weekly rebuilds
     
