@@ -40,6 +40,7 @@ services:
       - ./profiles:/opt/cobaltstrike/profiles
       - ./server:/opt/cobaltstrike/server
       - ./logs:/var/log/supervisor
+      - ./cobaltstrike-dist-linux.tgz:/opt/cobaltstrike/dist/cobaltstrike-dist-linux.tgz:ro  # Pre-staged tarball (recommended)
     environment:
       - LICENSE_KEY=your_license_key_here
       - TEAMSERVER_PASSWORD=your_secure_password
@@ -50,10 +51,17 @@ services:
     restart: unless-stopped
 ```
 
-2. Start the container:
+2. **Download the Cobalt Strike tarball** (recommended — the download server uses Cloudflare bot protection which blocks automated downloads):
+   - Log into https://download.cobaltstrike.com with your license key in a browser
+   - Download `cobaltstrike-dist-linux.tgz`
+   - Place it in the same directory as your `docker-compose.yml`
+
+3. Start the container:
 ```bash
 docker-compose up -d
 ```
+
+> **Note:** If you don't pre-stage the tarball, the container will attempt to download Cobalt Strike automatically. This may fail if Cloudflare blocks the request. Check `logs/cs_installer.out.log` for details.
 
 ## Documentation
 
