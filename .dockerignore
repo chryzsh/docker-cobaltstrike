@@ -1,0 +1,10 @@
+.git
+.github
+.gitignore
+.dockerignore
+*.md
+docs/
+image.png
+profiles/
+*.yml
+*.log
