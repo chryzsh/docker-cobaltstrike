@@ -33,3 +33,14 @@ validate_env_vars() {
 
     return $has_error
 }
+
+# Get the container's primary IP address
+get_container_ip() {
+    local ip
+    ip=$(hostname -I | awk '{print $1}')
+    if [ -z "$ip" ]; then
+        echo "Error: Failed to determine container IP address" >&2
+        return 1
+    fi
+    echo "$ip"
+}

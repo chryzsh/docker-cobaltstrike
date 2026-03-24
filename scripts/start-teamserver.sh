@@ -13,11 +13,7 @@ TEAMSERVER_IMAGE="${CS_DIR}/server/TeamServerImage"
 PROFILE_DIR="$CS_DIR/profiles"
 
 # Get container's primary IP
-TEAMSERVER_HOST=$(hostname -I | awk '{print $1}')
-if [ -z "$TEAMSERVER_HOST" ]; then
-    echo "Error: Failed to determine container IP address"
-    exit 1
-fi
+TEAMSERVER_HOST=$(get_container_ip) || exit 1
 
 # Validate environment variables
 if ! validate_env_vars; then
