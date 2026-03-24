@@ -8,7 +8,7 @@ This document details the technical architecture of the Docker Cobalt Strike con
 ### Container Structure
 - Based on Ubuntu 22.04
 - Uses Supervisor for process management
-- Three main processes: installation, teamserver, and listeners
+- Four main processes: installation, teamserver, listeners, and REST API
 
 ### Process Management
 - Supervisor manages process dependencies and lifecycle
@@ -21,7 +21,7 @@ This document details the technical architecture of the Docker Cobalt Strike con
 - Required variables:
   - TEAMSERVER_PASSWORD
   - LICENSE_KEY
-  - C2_PROFILE_NAME
+  - C2_PROFILE_NAME (optional — falls back to first .profile found)
 - Optional listener configurations
 - Regex-based format validation
 
@@ -44,6 +44,13 @@ This document details the technical architecture of the Docker Cobalt Strike con
 - Individual error handling per listener
 - Templated CNA scripts
 - Automatic retry mechanisms
+
+### REST API
+- Available on port 50443 (Cobalt Strike 4.12+)
+- Connects to teamserver on localhost:50050
+- Authenticates with TEAMSERVER_PASSWORD using a dedicated `csrestapi` user
+- Waits for teamserver port to be available before starting
+- Managed by supervisord with auto-restart
 
 ## Design Decisions
 
