@@ -24,7 +24,7 @@ fi
 # Function to get environment variable value safely
 get_env_var() {
     local var_name=$1
-    eval echo "\${$var_name:-}"
+    echo "${!var_name:-}"
 }
 
 # Function to set up a listener with retry logic
