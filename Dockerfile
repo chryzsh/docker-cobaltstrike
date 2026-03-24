@@ -46,5 +46,9 @@ RUN chmod +x /opt/cobaltstrike/services/*
 # Copy supervisord configuration
 COPY supervisord.conf /etc/supervisor/supervisord.conf
 
+# Health check — teamserver listens on 50050 when ready
+HEALTHCHECK --interval=30s --timeout=5s --start-period=120s --retries=3 \
+  CMD nc -z localhost 50050 || exit 1
+
 # Use supervisord as the entrypoint
 ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
