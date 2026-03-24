@@ -14,7 +14,7 @@ on ready {
         )
     );
     println("HTTP Listener created.");
-    sleep(1000);
+    sleep(3000);
 
     println("Closing client now.");
     closeClient();
