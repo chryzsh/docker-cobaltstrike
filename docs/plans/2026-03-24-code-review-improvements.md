@@ -47,30 +47,25 @@
 ## Medium Effort (do later)
 
 ### Task 6: Add version tagging to CI
-- **Status:** TODO
-- **File:** `.github/workflows/docker-image.yml`
-- **Issue:** Only tags `:latest`, no rollback capability
-- **Fix:** Add `:<sha-short>` and `:<date>` tags
+- **Status:** SKIPPED — user prefers `:latest` only, no need for rollback tags
 
 ### Task 7: Extract duplicate IP detection to shared function
-- **Status:** TODO
-- **Files:** `scripts/start-teamserver.sh:16`, `scripts/start-listeners.sh:12`, `scripts/env_validator.sh`
+- **Status:** DONE (f25ee50)
+- **Files:** `scripts/start-teamserver.sh`, `scripts/start-listeners.sh`, `scripts/env_validator.sh`
 - **Issue:** `hostname -I | awk '{print $1}'` duplicated with identical error handling
-- **Fix:** Add `get_container_ip()` to env_validator.sh
+- **Fix:** Added `get_container_ip()` to env_validator.sh, both scripts now use it
 
 ### Task 8: Fix C2_PROFILE_NAME env var inconsistency
-- **Status:** TODO
-- **Files:** `docs/CONFIGURATION.md`, `scripts/start-teamserver.sh`
+- **Status:** DONE (2d9a7af)
+- **Files:** `scripts/start-teamserver.sh`
 - **Issue:** C2_PROFILE_NAME is documented as required but start-teamserver.sh ignores it and just picks the first .profile file
-- **Fix:** Either implement C2_PROFILE_NAME support or remove from docs
+- **Fix:** Implemented C2_PROFILE_NAME support — uses specific profile if set, falls back to first .profile found
 
 ### Task 9: Add log rotation
-- **Status:** TODO
-- **Issue:** /var/log/supervisor logs grow unbounded in long-running containers
-- **Fix:** Add logrotate config or supervisor log rotation settings
+- **Status:** SKIPPED — containers are redeployed frequently, not a practical issue
 
 ### Task 10: Update ARCHITECTURE.md for REST API
-- **Status:** TODO
+- **Status:** DONE (32c6618)
 - **File:** `docs/ARCHITECTURE.md`
 - **Issue:** No mention of REST API feature added in recent commits
-- **Fix:** Add REST API section
+- **Fix:** Added REST API section, corrected C2_PROFILE_NAME as optional
