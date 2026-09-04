@@ -30,7 +30,7 @@ docs/                       # Configuration, architecture, troubleshooting guide
 Supervisord launches all processes simultaneously, but dependencies are enforced with wait loops:
 
 1. **cs_installer** (priority 1): Validates env, writes license, downloads/installs CS, creates `installer_done.flag`
-2. **teamserver** (priority 2): Waits for `installer_done.flag`, then starts teamserver on port 50050
+2. **teamserver** (priority 2): Waits for `installer_done.flag` AND `server/TeamServerImage` to exist, then starts teamserver on port 50050
 3. **listener** (priority 3): Waits for port 50050, then runs agscript to create listeners in parallel
 4. **restapi** (priority 4): Waits for port 50050, then starts REST API on port 50443
 5. **state_monitor**: Event listener that logs process state changes and kills supervisord if the installer fails
@@ -40,8 +40,9 @@ Supervisord launches all processes simultaneously, but dependencies are enforced
 - **All scripts source `env_validator.sh`** for consistent environment validation
 - **CNA templates** use `envsubst` for variable substitution — the templates in `services/` use `${VAR}` syntax
 - **Listeners are optional** — they only start if their corresponding env var is set
-- **The installer creates a flag file** (`installer_done.flag`) to signal the teamserver to start
+- **The installer creates a flag file** (`installer_done.flag`) to signal the teamserver to start. This file lives outside every bind mount (in the container's writable layer), so it survives a `docker stop`/`start` but not a `docker compose down`/`up`. The teamserver wait-loop also checks `server/TeamServerImage` directly (not just the flag) so a stale flag from a prior install can't race it ahead of a reinstall — this bit us once during a live version upgrade before the second check was added, don't remove it.
 - **Pre-staged tarball support**: Mount `cobaltstrike-dist-linux.tgz` to `/opt/cobaltstrike/dist/` to skip the download (Cloudflare blocks automated downloads from `download.cobaltstrike.com`)
+- **Upgrading Cobalt Strike versions**: documented in README's "Upgrading" section (tarball swap + force reinstall by removing `TeamServerImage`, then recreate the container). Always re-validate the C2 profile with `c2lint` after a major-version bump — Malleable C2 options get removed between versions (e.g. 4.13 dropped `stage.rdll_loader` and `stage.smartinject`) and a previously-working profile can silently fail to compile.
 
 ## Rules for Code Changes
 
@@ -67,7 +68,8 @@ Supervisord launches all processes simultaneously, but dependencies are enforced
 - Process priority numbers matter — lower numbers start first
 - The teamserver and listeners use bash wait loops for dependency management, not supervisord's built-in dependency system
 - `cs_installer` uses `autorestart=unexpected` with `exitcodes=0` — it should run once and succeed
-- Other services use `autorestart=true` to survive transient failures
+- Other services use `autorestart=true` to survive transient failures — but supervisord still enforces `startretries` as a circuit breaker: enough fast failures in a row (e.g. a bad C2 profile edit) puts a program into `FATAL` state, where `autorestart` no longer applies until manually restarted
+- `supervisorctl` is wired up (`[unix_http_server]`/`[rpcinterface:supervisor]`/`[supervisorctl]` sections) so a `FATAL` service can be recovered with `docker exec <container> supervisorctl restart <program>` without recreating the whole container — don't remove these sections
 
 ### CI/CD
 - The GitHub Actions workflow builds and pushes to Docker Hub on every push to `main`
