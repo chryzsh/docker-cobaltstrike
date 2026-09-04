@@ -63,6 +63,29 @@ docker-compose up -d
 
 > **Note:** If you don't pre-stage the tarball, the container will attempt to download Cobalt Strike automatically. This may fail if Cloudflare blocks the request. Check `logs/cs_installer.out.log` for details.
 
+## Upgrading
+
+Cobalt Strike binaries live in `./server`, which is also where the teamserver keeps its runtime data (beacon keys, downloaded files, keystrokes, audit logs). The installer only installs once — if `./server/TeamServerImage` already exists, it skips straight to starting the teamserver on every restart. To upgrade, you force that check to fail again with a newer tarball staged, without touching the rest of `./server`.
+
+`/opt/cobaltstrike` is owned by `root` inside the container (and on the host, since it's a bind mount) — run these as root/`sudo`.
+
+1. **Back up first** (safety net): `cp -a ./server ./server.bak-$(date +%Y%m%d)`
+2. **Download the new version's tarball** — log into https://download.cobaltstrike.com with your license key in a browser and grab `cobaltstrike-dist-linux.tgz` for the version you want. Replace the file referenced by your tarball mount in `docker-compose.yml`.
+3. **Clear the install marker** so the installer re-runs: `rm ./server/TeamServerImage`
+4. **Recreate the container — don't just stop/start it**: `docker compose down && docker compose up -d`. This matters: `installer_done.flag` lives outside every bind mount, in the container's own writable layer. A `stop`/`up` reuses that layer, so the *stale* flag from the previous install is still there — the `teamserver` process's wait-loop sees it immediately and races ahead of the reinstall, fails a few times before the new binaries are in place, and supervisord (which has no `supervisorctl` control interface wired up in this image) marks it `FATAL` and stops retrying for good. Only a full recreate guarantees a clean flag and avoids that race. (`down` only removes the container itself — your bind-mounted `./server`, `./profiles`, and `./logs` are untouched.)
+5. **Watch the install**: `tail -f logs/cs_installer.out.log`. The installer re-extracts the new tarball into `./server` — only files shipped in the tarball are overwritten, so `data/`, beacon keys, and audit logs are left alone — then re-runs Cobalt Strike's own `update.jar` step before starting the teamserver.
+6. **Validate your C2 profile before trusting the result**: `./server/c2lint profiles/your.profile`. Major version bumps regularly drop or rename Malleable C2 options (e.g. 4.13 removed `stage.rdll_loader` and `stage.smartinject`) — an old profile that worked fine on the previous version can silently fail to compile on the new one and block the teamserver from starting. Fix any reported errors in your profile, re-run `c2lint` until it's clean, then restart.
+7. **Confirm the version** in `logs/teamserver.out.log`, or by connecting with the CS client and checking Help > About.
+
+Note: `docker-compose` (hyphenated v1) may not be installed on newer hosts — use `docker compose` (the v2 CLI plugin, space not hyphen) if the hyphenated form errors with "command not found".
+
+> **Alternative:** if the container hasn't been recreated since the last install (so `update.jar` still exists in its filesystem layer), you can try Cobalt Strike's incremental updater in place, without staging a new tarball:
+> ```bash
+> docker exec -it cobaltstrike bash -c 'cd /opt/cobaltstrike && echo "$LICENSE_KEY" | java -jar update.jar -Type:linux'
+> docker restart cobaltstrike
+> ```
+> This hits the same `download.cobaltstrike.com` endpoint that Cloudflare blocks for automated requests, so it may fail — fall back to the tarball-swap steps above if it does.
+
 ## Documentation
 
 For detailed information, please see the following guides:
