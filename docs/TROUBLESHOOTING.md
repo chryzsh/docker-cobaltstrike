@@ -165,3 +165,11 @@ rm /opt/cobaltstrike/installer_done.flag
 
 # Restart container
 docker restart cobaltstrike
+```
+
+#### Recovering a Process Stuck in FATAL State
+If a service (most commonly `teamserver`, e.g. after a bad C2 profile edit) fails to start a few times in a row too quickly, supervisord marks it `FATAL` and stops auto-restarting it — `autorestart=true` no longer applies once that happens. Check for it and recover it in place, without restarting the whole container:
+```bash
+docker exec -it cobaltstrike supervisorctl status
+docker exec -it cobaltstrike supervisorctl restart teamserver
+```
